@@ -63,11 +63,11 @@ class AirCargoProblem(Problem):
             for c in self.cargos:
                 for p in self.planes:
                     for a in self.airports:
-                        precond_pos = [expr(f"At({c}, {a}"), expr(f"At({p}, {a}")]
+                        precond_pos = [expr(f"At({c}, {a})"), expr(f"At({p}, {a})")]
                         precond_neg = []
 
-                        effect_add = [expr(f"In({c}, {p}")]
-                        effect_rem = [expr(f"At({c}, {a}")]
+                        effect_add = [expr(f"In({c}, {p})")]
+                        effect_rem = [expr(f"At({c}, {a})")]
 
                         load = Action(expr(f"Load({c}, {p}, {a})"), [precond_pos, precond_neg], [effect_add, effect_rem])
                         loads.append(load)
@@ -82,11 +82,11 @@ class AirCargoProblem(Problem):
             for c in self.cargos:
                 for p in self.planes:
                     for a in self.airports:
-                        precond_pos = [expr(f"In({c}, {p}"), expr(f"At({p}, {a}")]
+                        precond_pos = [expr(f"In({c}, {p})"), expr(f"At({p}, {a})")]
                         precond_neg = []
 
-                        effect_add = [expr(f"At({c}, {a}")]
-                        effect_rem = [expr(f"In({c}, {p}")]
+                        effect_add = [expr(f"At({c}, {a})")]
+                        effect_rem = [expr(f"In({c}, {p})")]
 
                         unload = Action(expr(f"Unload({c}, {p}, {a})"), [precond_pos, precond_neg], [effect_add, effect_rem])
                         unloads.append(unload)
@@ -123,8 +123,24 @@ class AirCargoProblem(Problem):
             e.g. 'FTTTFF'
         :return: list of Action objects
         """
-        # TODO implement
         possible_actions = []
+
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        for action in self.actions_list:
+            possible = True
+
+            for clause in action.precond_pos:
+                if clause not in kb.clauses:
+                    possible = False
+
+            for clause in action.precond_neg:
+                if clause in kb.clauses:
+                    possible = False
+
+            if possible:
+                possible_actions.append(action)
+
         return possible_actions
 
     def result(self, state: str, action: Action):
