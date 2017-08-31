@@ -220,6 +220,12 @@ class AirCargoProblem(Problem):
                 count += 1
         return count
 
+# Init(At(C1, SFO) ∧ At(C2, JFK) 
+# 	∧ At(P1, SFO) ∧ At(P2, JFK) 
+# 	∧ Cargo(C1) ∧ Cargo(C2) 
+# 	∧ Plane(P1) ∧ Plane(P2)
+# 	∧ Airport(JFK) ∧ Airport(SFO))
+# Goal(At(C1, JFK) ∧ At(C2, SFO))
 def air_cargo_p1() -> AirCargoProblem:
     cargos = ['C1', 'C2']
     planes = ['P1', 'P2']
@@ -245,11 +251,64 @@ def air_cargo_p1() -> AirCargoProblem:
     return AirCargoProblem(cargos, planes, airports, init, goal)
 
 
+# Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) 
+# 	∧ At(P1, SFO) ∧ At(P2, JFK) ∧ At(P3, ATL) 
+# 	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3)
+# 	∧ Plane(P1) ∧ Plane(P2) ∧ Plane(P3)
+# 	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL))
+# Goal(At(C1, JFK) ∧ At(C2, SFO) ∧ At(C3, SFO))
 def air_cargo_p2() -> AirCargoProblem:
-    # TODO implement Problem 2 definition
-    pass
+    cargos = ['C1', 'C2', 'C3']
+    planes = ['P1', 'P2', 'P3']
+    airports = ['SFO', 'JFK', 'ATL']
 
+    pos = [expr('At(C1, SFO)'),
+           expr('At(C2, JFK)'),
+           expr('At(C3, ATL)'),
+           expr('At(P1, SFO)'),
+           expr('At(P2, JFK)'),
+           expr('At(P3, ATL)')
+           ]
+    neg = [expr('At(C1, JFK)'),
+           expr('At(C1, ATL)'),
+           expr('In(C1, P1)'),
+           expr('In(C1, P2)'),
+           expr('In(C1, P3)'),
 
+           expr('At(C2, SFO)'),
+           expr('At(C2, ATL)'),
+           expr('In(C2, P1)'),
+           expr('In(C2, P2)'),
+           expr('In(C2, P3)'),
+
+           expr('At(C3, SFO)'),
+           expr('At(C3, JFK)'),
+           expr('In(C3, P1)'),
+           expr('In(C3, P2)'),
+           expr('In(C3, P3)'),
+
+           expr('In(P1, JFK)'),
+           expr('In(P1, ATL)'),
+
+           expr('In(P2, SFO)'),
+           expr('In(P2, ATL)'),
+
+           expr('In(P3, SFO)'),
+           expr('In(P3, JFK)')
+           ]
+    init = FluentState(pos, neg)
+    goal = [expr('At(C1, JFK)'),
+            expr('At(C2, SFO)'),
+            expr('At(C3, SFO)')
+            ]
+    return AirCargoProblem(cargos, planes, airports, init, goal)
+
+# Init(At(C1, SFO) ∧ At(C2, JFK) ∧ At(C3, ATL) ∧ At(C4, ORD) 
+# 	∧ At(P1, SFO) ∧ At(P2, JFK) 
+# 	∧ Cargo(C1) ∧ Cargo(C2) ∧ Cargo(C3) ∧ Cargo(C4)
+# 	∧ Plane(P1) ∧ Plane(P2)
+# 	∧ Airport(JFK) ∧ Airport(SFO) ∧ Airport(ATL) ∧ Airport(ORD))
+# Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
 def air_cargo_p3() -> AirCargoProblem:
     # TODO implement Problem 3 definition
     pass
