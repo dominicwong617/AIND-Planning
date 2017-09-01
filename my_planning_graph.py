@@ -307,9 +307,22 @@ class PlanningGraph():
         # 1. determine what actions to add and create those PgNode_a objects
         # 2. connect the nodes to the previous S literal level
         # for example, the A0 level will iterate through all possible actions for the problem and add a PgNode_a to a_levels[0]
-        #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
+        #   set if all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
+        action_nodes = set()
+        s_level = self.s_levels[level]
+        for action in self.all_actions:
+            action_node = PgNode_a(action)
+            prenodes = action_node.prenodes
+            if all(prenode in s_level for prenode in prenodes):
+                action_nodes.add(action_node)
+                for state_node in s_level:
+                    if state_node in prenodes:
+                        state_node.children.add(action_node)
+                        action_node.parents.add(state_node)
+
+        self.a_levels.append(action_nodes)
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
@@ -328,6 +341,15 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+        state_nodes = set()
+
+        for action_node in self.a_levels[level - 1]:
+            for state_node in action_node.effnodes:
+                action_node.children.add(state_node)
+                state_node.parents.add(action_node)
+                state_nodes.add(state_node)
+
+        self.s_levels.append(state_nodes)
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
