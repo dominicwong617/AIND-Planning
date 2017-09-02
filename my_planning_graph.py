@@ -454,7 +454,11 @@ class PlanningGraph():
         :return: bool
         """
 
-        # TODO test for Competing Needs between nodes
+        for parent1 in node_a1.parents:
+            for parent2 in node_a2.parents:
+                if parent1.is_mutex(parent2):
+                    return True
+
         return False
 
     def update_s_mutex(self, nodeset: set):
