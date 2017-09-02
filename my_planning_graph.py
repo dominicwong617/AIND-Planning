@@ -417,7 +417,7 @@ class PlanningGraph():
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
-        Test a pair of actions for mutual exclusion, returning True if the 
+        Test a pair of actions for mutual exclusion, returning True if the
         effect of one action is the negation of a precondition of the other.
 
         HINT: The Action instance associated with an action node is accessible
@@ -429,7 +429,18 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Interference between nodes
+        if any(effect in node_a1.action.precond_pos for effect in node_a2.action.effect_rem):
+            return True
+
+        if any(effect in node_a2.action.precond_pos for effect in node_a1.action.effect_rem):
+            return True
+
+        if any(effect in node_a1.action.precond_neg for effect in node_a2.action.effect_add):
+            return True
+
+        if any(effect in node_a2.action.precond_neg for effect in node_a1.action.effect_add):
+            return True
+
         return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
