@@ -318,9 +318,8 @@ class PlanningGraph():
             if all(prenode in s_level for prenode in prenodes):
                 action_nodes.add(action_node)
                 for state_node in s_level:
-                    if state_node in prenodes:
-                        state_node.children.add(action_node)
-                        action_node.parents.add(state_node)
+                    state_node.children.add(action_node)
+                    action_node.parents.add(state_node)
 
         self.a_levels.append(action_nodes)
 
